@@ -46,14 +46,14 @@ lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6,
 lcd.clear()
 
 
-def display(str1, str2 = ""):
+def display(str1, str2 = "", time = 5):
     lcd.message = str1 + "\n" + str2
-    sleep(5)
+    sleep(time)
     lcd.message = "Listening..."
  
 # Loop infinitely for user to
 # speak 
-lcd.message = "Listening..."
+lcd.message = "Starting..."
 
 vocab_size = 66123 # +1 for the 0 padding
 output_size = 1
@@ -62,8 +62,8 @@ hidden_dim = 128
 n_layers = 2
 model = SentimentAnalysis.SentimentAnalysisModel(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
 
-
-word_freq = np.load('word_freq_1.npy',allow_pickle='TRUE').item()
+display("Initialization complete", "", 2)
+lcd.message = "Listening..."
 
 while 1:
     display(model.predict_text(input()))
