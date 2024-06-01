@@ -61,53 +61,72 @@ def display_sentiment(text,prob):
 # speak 
 lcd.message = "Starting..."
 
-vocab_size = 66123 # +1 for the 0 padding
-output_size = 1
-embedding_dim = 400
-hidden_dim = 128
-n_layers = 2
-model = SentimentAnalysis.SentimentAnalysisModel(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
+model_size = input("Model Size: [L]arge/[S]mall")
+
+
+if (model_size == 'L'):
+    vocab_size = 850171 # +1 for the 0 padding
+    output_size = 1
+    embedding_dim = 400
+    hidden_dim = 256
+    n_layers = 2
+    model = SentimentAnalysis.SentimentAnalysisModel(vocab_size, output_size, embedding_dim, hidden_dim, n_layers, 0.5, True)
+elif (model_size == 'S'):
+    vocab_size = 66123 # +1 for the 0 padding
+    output_size = 1
+    embedding_dim = 400
+    hidden_dim = 128
+    n_layers = 2
+    model = SentimentAnalysis.SentimentAnalysisModel(vocab_size, output_size, embedding_dim, hidden_dim, n_layers, 0.5, False)
+else:
+    exit()
+
+mode_txt = input("Usage Mode: [T]ext/[A]udio")
+
+if (mode_txt != 'A' and mode_txt != 'T'):
+    exit()
 
 print("Ready")
 display("Ready!         ", "", 2)
 lcd.message = "Listening...        \n"
 
-while False:
-    txt = input()
-    display_sentiment(txt, model.predict_text(txt))
+if (mode_txt == 'T'):
+    while True:
+        txt = input()
+        display_sentiment(txt, model.predict_text(txt))
 
-
-while(1):    
-     
-    # Exception handling to handle
-    # exceptions at the runtime
-    try:
-         
-        # use the microphone as source for input.
-        with sr.Microphone() as source2:
-             
-            # wait for a second to let the recognizer
-            # adjust the energy threshold based on
-            # the surrounding noise level 
-            r.adjust_for_ambient_noise(source2, duration=0.2)
-             
-            #listens for the user's input 
-            audio2 = r.listen(source2,10)
-             
-            # recognize audio
-
-            #MyText = r.recognize_sphinx(audio2)
-            MyText = r.recognize_google(audio2)
+elif (mode_txt == 'A'):
+    while(1):    
+        
+        # Exception handling to handle
+        # exceptions at the runtime
+        try:
             
-            MyText = MyText.lower()
- 
-            display_sentiment(MyText, model.predict_text(MyText))
-             
-    except sr.RequestError as e:
-        display("Request Error")
-         
-    except sr.UnknownValueError:
-        display("Not Recognized")
+            # use the microphone as source for input.
+            with sr.Microphone() as source2:
+                
+                # wait for a second to let the recognizer
+                # adjust the energy threshold based on
+                # the surrounding noise level 
+                r.adjust_for_ambient_noise(source2, duration=0.2)
+                
+                #listens for the user's input 
+                audio2 = r.listen(source2,10)
+                
+                # recognize audio
 
-    except sr.WaitTimeoutError:
-        display("No Input Detected")
+                #MyText = r.recognize_sphinx(audio2)
+                MyText = r.recognize_google(audio2)
+                
+                MyText = MyText.lower()
+    
+                display_sentiment(MyText, model.predict_text(MyText))
+                
+        except sr.RequestError as e:
+            display("Request Error")
+            
+        except sr.UnknownValueError:
+            display("Not Recognized")
+
+        except sr.WaitTimeoutError:
+            display("No Input Detected")

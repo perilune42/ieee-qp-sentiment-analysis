@@ -7,7 +7,7 @@ class SentimentAnalysisModel(nn.Module):
     """
     Model for sentiment analysist.
     """
-    def __init__(self, vocab_size, output_dim, embedding_dim, hidden_dim, n_layers, drop_prob=0.5):
+    def __init__(self, vocab_size, output_dim, embedding_dim, hidden_dim, n_layers, drop_prob, large):
         """
         Initialize the model by setting up the layers
         """
@@ -30,9 +30,15 @@ class SentimentAnalysisModel(nn.Module):
         self.fc4 = nn.Linear(16,output_dim)
         self.sigmoid = nn.Sigmoid()
 
-        self.load_state_dict(torch.load('model_weights_smaller.pth', map_location=torch.device('cpu')))
+        if large:
+            self.load_state_dict(torch.load('model_weights.pth', map_location=torch.device('cpu')))
+        else:
+            self.load_state_dict(torch.load('model_weights_smaller.pth', map_location=torch.device('cpu')))
         self.eval()
-        self.word_freq = np.load('word_freq_1.npy',allow_pickle='TRUE').item()
+        if large:
+            self.word_freq = np.load('word_freq.npy',allow_pickle='TRUE').item()
+        else:
+            self.word_freq = np.load('word_freq_1.npy',allow_pickle='TRUE').item()
 
     def forward(self, x, hidden):
         """
