@@ -49,8 +49,14 @@ lcd.clear()
 def display(str1, str2 = "", time = 5):
     lcd.message = str1 + "\n" + str2
     sleep(time)
-    lcd.message = "Listening..."
+    lcd.message = "Listening...     \n"
  
+def display_sentiment(text,prob):
+    if prob > 0.5:
+        display(text, "Positive: {:.2f}%".format(prob*100))
+    else:
+        display(text, "Negative: {:.2f}%".format((1-prob)*100))
+
 # Loop infinitely for user to
 # speak 
 lcd.message = "Starting..."
@@ -63,11 +69,11 @@ n_layers = 2
 model = SentimentAnalysis.SentimentAnalysisModel(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
 
 print("Ready")
-display("Initialization complete", "", 2)
-lcd.message = "Listening...\n"
+display("Ready!", "", 2)
+lcd.message = "Listening...        \n"
 
 while 1:
-    display(str(model.predict_text(input())))
+    display_sentiment(model.predict_text(input()))
 
 
 while(1):    
