@@ -85,16 +85,7 @@ class SentimentAnalysisModel(nn.Module):
         return(output.item())
 
 
-vocab_size = 850171 # +1 for the 0 padding
-output_size = 1
-embedding_dim = 400
-hidden_dim = 256
-n_layers = 2
-model = SentimentAnalysisModel(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
 
-
-
-word_freq = np.load('word_freq_1.npy',allow_pickle='TRUE').item()
 def preprocess_string(s):
     # Remove all non-word characters (everything except numbers and letters)
     s = re.sub(r"[^\w\s]", '', s)
@@ -111,13 +102,23 @@ def padding_(sentences, seq_len):
             features[ii, -len(review):] = np.array(review)[:seq_len]
     return features
 
+if __name__ == "__main__":
+    vocab_size = 66123 # +1 for the 0 padding
+    output_size = 1
+    embedding_dim = 400
+    hidden_dim = 128
+    n_layers = 2
+    model = SentimentAnalysisModel(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
 
-while (1):
 
-    input_text = input("input your text: ")
-    print(input_text)
-    print('='*70)
-    pro = model.predict_text(input_text)
-    status = "positive" if pro > 0.5 else "negative"
-    pro = (1 - pro) if status == "negative" else pro
-    print(f'Predicted sentiment is {status} with a probability of {pro}')
+
+    word_freq = np.load('word_freq_1.npy',allow_pickle='TRUE').item()
+    while (1):
+
+        input_text = input("input your text: ")
+        print(input_text)
+        print('='*70)
+        pro = model.predict_text(input_text)
+        status = "positive" if pro > 0.5 else "negative"
+        pro = (1 - pro) if status == "negative" else pro
+        print(f'Predicted sentiment is {status} with a probability of {pro}')
