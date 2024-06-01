@@ -30,6 +30,9 @@ class SentimentAnalysisModel(nn.Module):
         self.fc4 = nn.Linear(16,output_dim)
         self.sigmoid = nn.Sigmoid()
 
+        self.load_state_dict(torch.load('model_weights.pth', map_location=torch.device('cpu')))
+        self.eval()
+
     def forward(self, x, hidden):
         """
         Perform a forward pass of our model on some input and hidden state.
@@ -69,6 +72,18 @@ class SentimentAnalysisModel(nn.Module):
                 weight.new(self.n_layers, batch_size, self.hidden_dim).zero_())
 
         return hidden
+    
+    def predict_text(self, text):
+        word_seq = np.array([word_freq[preprocess_string(word)] for word in text.split()
+                         if preprocess_string(word) in word_freq.keys()])
+        word_seq = np.expand_dims(word_seq,axis=0)
+        inputs =  torch.from_numpy(padding_(word_seq,50))
+        batch_size = 1
+        h = self.init_hidden(batch_size)
+        h = tuple([each.data for each in h])
+        output, h = self(inputs, h)
+        return(output.item())
+
 
 vocab_size = 850171 # +1 for the 0 padding
 output_size = 1
@@ -77,8 +92,7 @@ hidden_dim = 256
 n_layers = 2
 model = SentimentAnalysisModel(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
 
-model.load_state_dict(torch.load('model_weights.pth', map_location=torch.device('cpu')))
-model.eval()
+
 
 word_freq = np.load('word_freq.npy',allow_pickle='TRUE').item()
 def preprocess_string(s):
@@ -97,28 +111,13 @@ def padding_(sentences, seq_len):
             features[ii, -len(review):] = np.array(review)[:seq_len]
     return features
 
-def predict_text(text):
-        word_seq = np.array([word_freq[preprocess_string(word)] for word in text.split()
-                         if preprocess_string(word) in word_freq.keys()])
-        word_seq = np.expand_dims(word_seq,axis=0)
-        inputs =  torch.from_numpy(padding_(word_seq,50))
-        batch_size = 1
-        h = model.init_hidden(batch_size)
-        h = tuple([each.data for each in h])
-        output, h = model(inputs, h)
-        return(output.item())
 
+while (1):
 
-index = 30
-# input_text = df['Tweet'][index]
-input_text = input("input your text: ")
-# true_sentiment = df["Rating"][index]
-true_sentiment = 0
-print(input_text)
-print('='*70)
-# print(f'Actual sentiment is  : {true_sentiment}')
-# print('='*70)
-pro = predict_text(input_text)
-status = "positive" if pro > 0.5 else "negative"
-pro = (1 - pro) if status == "negative" else pro
-print(f'Predicted sentiment is {status} with a probability of {pro}')
+    input_text = input("input your text: ")
+    print(input_text)
+    print('='*70)
+    pro = model.predict_text(input_text)
+    status = "positive" if pro > 0.5 else "negative"
+    pro = (1 - pro) if status == "negative" else pro
+    print(f'Predicted sentiment is {status} with a probability of {pro}')

@@ -12,7 +12,7 @@ from datetime import datetime
 import board
 import digitalio
 import adafruit_character_lcd.character_lcd as characterlcd
-
+import SentimentAnalysis
 
 # Initialize the recognizer 
 r = sr.Recognizer() 
@@ -45,11 +45,25 @@ lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6,
 lcd.clear()
 
 
-
+def display(str1, str2 = ""):
+    lcd.message = str1 + "\n" + str2
+    sleep(5)
+    lcd.message = "Listening..."
  
 # Loop infinitely for user to
 # speak 
 lcd.message = "Listening..."
+
+vocab_size = 850171 # +1 for the 0 padding
+output_size = 1
+embedding_dim = 400
+hidden_dim = 256
+n_layers = 2
+model = SentimentAnalysis.SentimentAnalysisModel(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
+
+while 1:
+    display(model.predict_text(input()))
+
 
 while(1):    
      
@@ -66,7 +80,7 @@ while(1):
             r.adjust_for_ambient_noise(source2, duration=0.2)
              
             #listens for the user's input 
-            audio2 = r.listen(source2)
+            audio2 = r.listen(source2,10)
              
             # recognize audio
 
@@ -75,12 +89,13 @@ while(1):
             
             MyText = MyText.lower()
  
-            lcd.message = MyText
-            sleep(5)
-            lcd.message = "Listening..."
+            display(MyText)
              
     except sr.RequestError as e:
-        lcd.message = "Could not request results; {0}".format(e)
+        display("Could not request results; {0}".format(e))
          
     except sr.UnknownValueError:
-        lcd.message = "unknown error occurred"
+        display("not recognized")
+
+    except sr.WaitTimeoutError:
+        display("no input detected")
