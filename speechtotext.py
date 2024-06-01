@@ -62,11 +62,12 @@ hidden_dim = 128
 n_layers = 2
 model = SentimentAnalysis.SentimentAnalysisModel(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
 
+print("Ready")
 display("Initialization complete", "", 2)
-lcd.message = "Listening..."
+lcd.message = "Listening...\n"
 
 while 1:
-    display(model.predict_text(input()))
+    display(str(model.predict_text(input())))
 
 
 while(1):    
