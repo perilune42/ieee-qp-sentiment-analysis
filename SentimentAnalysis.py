@@ -30,7 +30,7 @@ class SentimentAnalysisModel(nn.Module):
         self.fc4 = nn.Linear(16,output_dim)
         self.sigmoid = nn.Sigmoid()
 
-        self.load_state_dict(torch.load('model_weights.pth', map_location=torch.device('cpu')))
+        self.load_state_dict(torch.load('model_weights_smaller.pth', map_location=torch.device('cpu')))
         self.eval()
 
     def forward(self, x, hidden):
@@ -94,7 +94,7 @@ model = SentimentAnalysisModel(vocab_size, output_size, embedding_dim, hidden_di
 
 
 
-word_freq = np.load('word_freq.npy',allow_pickle='TRUE').item()
+word_freq = np.load('word_freq_1.npy',allow_pickle='TRUE').item()
 def preprocess_string(s):
     # Remove all non-word characters (everything except numbers and letters)
     s = re.sub(r"[^\w\s]", '', s)

@@ -13,6 +13,7 @@ import board
 import digitalio
 import adafruit_character_lcd.character_lcd as characterlcd
 import SentimentAnalysis
+import numpy as np
 
 # Initialize the recognizer 
 r = sr.Recognizer() 
@@ -54,12 +55,15 @@ def display(str1, str2 = ""):
 # speak 
 lcd.message = "Listening..."
 
-vocab_size = 850171 # +1 for the 0 padding
+vocab_size = 66123 # +1 for the 0 padding
 output_size = 1
 embedding_dim = 400
-hidden_dim = 256
+hidden_dim = 128
 n_layers = 2
 model = SentimentAnalysis.SentimentAnalysisModel(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
+
+
+word_freq = np.load('word_freq_1.npy',allow_pickle='TRUE').item()
 
 while 1:
     display(model.predict_text(input()))
