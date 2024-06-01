@@ -128,7 +128,7 @@ elif (mode_txt == 'A'):
             display("Request Error")
             
         except sr.UnknownValueError:
-            display("Not Recognized")
+            display("Not Recognized", "", 2.5)
 
         except sr.WaitTimeoutError:
             display("No Input Detected")
