@@ -61,8 +61,10 @@ def display_sentiment(text,prob):
 # speak 
 lcd.message = "Starting..."
 
-model_size = input("Model Size: [L]arge/[S]mall")
 
+#model_size = input("Model Size: [L]arge/[S]mall")
+
+model_size = 'S'
 
 if (model_size == 'L'):
     vocab_size = 850171 # +1 for the 0 padding
@@ -81,7 +83,7 @@ elif (model_size == 'S'):
 else:
     exit()
 
-mode_txt = input("Usage Mode: [T]ext/[A]udio")
+mode_txt = input("Usage Mode: [T]ext/[A]udio  ")
 
 if (mode_txt != 'A' and mode_txt != 'T'):
     exit()
