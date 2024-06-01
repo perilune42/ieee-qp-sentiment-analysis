@@ -32,6 +32,7 @@ class SentimentAnalysisModel(nn.Module):
 
         self.load_state_dict(torch.load('model_weights_smaller.pth', map_location=torch.device('cpu')))
         self.eval()
+        self.word_freq = np.load('word_freq_1.npy',allow_pickle='TRUE').item()
 
     def forward(self, x, hidden):
         """
@@ -74,8 +75,8 @@ class SentimentAnalysisModel(nn.Module):
         return hidden
     
     def predict_text(self, text):
-        word_seq = np.array([word_freq[preprocess_string(word)] for word in text.split()
-                         if preprocess_string(word) in word_freq.keys()])
+        word_seq = np.array([self.word_freq[preprocess_string(word)] for word in text.split()
+                         if preprocess_string(word) in self.word_freq.keys()])
         word_seq = np.expand_dims(word_seq,axis=0)
         inputs =  torch.from_numpy(padding_(word_seq,50))
         batch_size = 1
@@ -112,7 +113,7 @@ if __name__ == "__main__":
 
 
 
-    word_freq = np.load('word_freq_1.npy',allow_pickle='TRUE').item()
+    
     while (1):
 
         input_text = input("input your text: ")
