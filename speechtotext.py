@@ -47,7 +47,7 @@ lcd.clear()
 
 
 def display(str1, str2 = "", time = 5):
-    lcd.message = str1 + "\n" + str2
+    lcd.message = str1 + "           \n" + str2 + ""
     sleep(time)
     lcd.message = "Listening...     \n"
  
@@ -72,7 +72,7 @@ print("Ready")
 display("Ready!         ", "", 2)
 lcd.message = "Listening...        \n"
 
-while 1:
+while False:
     txt = input()
     display_sentiment(txt, model.predict_text(txt))
 
@@ -101,13 +101,13 @@ while(1):
             
             MyText = MyText.lower()
  
-            display(MyText)
+            display_sentiment(MyText, model.predict_text(MyText))
              
     except sr.RequestError as e:
-        display("Could not request results; {0}".format(e))
+        display("Request Error")
          
     except sr.UnknownValueError:
-        display("not recognized")
+        display("Not Recognized")
 
     except sr.WaitTimeoutError:
-        display("no input detected")
+        display("No Input Detected")
