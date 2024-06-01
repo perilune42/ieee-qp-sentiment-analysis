@@ -69,11 +69,12 @@ n_layers = 2
 model = SentimentAnalysis.SentimentAnalysisModel(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
 
 print("Ready")
-display("Ready!", "", 2)
+display("Ready!         ", "", 2)
 lcd.message = "Listening...        \n"
 
 while 1:
-    display_sentiment(model.predict_text(input()))
+    txt = input()
+    display_sentiment(txt, model.predict_text(txt))
 
 
 while(1):    
